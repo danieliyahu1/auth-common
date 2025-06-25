@@ -77,9 +77,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>github</id>
+			<id>github-danieliyahu1</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/your-org/auth-common</url>
+			<url>https://maven.pkg.github.com/danieliyahu1/auth-common</url>
 		</repository>
 	</distributionManagement>
 
