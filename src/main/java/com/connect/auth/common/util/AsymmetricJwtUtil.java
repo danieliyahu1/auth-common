@@ -3,40 +3,26 @@ package com.connect.auth.common.util;
 import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
 import com.connect.auth.common.exception.AuthCommonInvalidRefreshTokenException;
 import com.connect.auth.common.exception.AuthCommonInvalidTokenException;
+import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.Date;
 import java.util.UUID;
-import static com.connect.auth.common.constants.JwtConstants.ACCESS_TOKEN_LIFE_SPAN;
-import static com.connect.auth.common.constants.JwtConstants.REFRESH_TOKEN_LIFE_SPAN;
 
 @Component
-public class JwtUtil {
-    private final SecretKey secretKey;
+public class AsymmetricJwtUtil {
 
-    public JwtUtil(@Value("${jwt.secret}") String secret){
-        byte[] keyBytes = Base64.getDecoder()
-                .decode(secret.getBytes(StandardCharsets.UTF_8));
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-    }
+    private static final Logger log = LoggerFactory.getLogger(AsymmetricJwtUtil.class);
+    private final PublicKey publicKey;
 
-    public String generateAccessToken(UUID userId){
-        return generateToken(userId, "access", ACCESS_TOKEN_LIFE_SPAN);
-
-    }
-
-    public String generateRefreshToken(UUID userId) {
-        return generateToken(userId, "refresh", REFRESH_TOKEN_LIFE_SPAN);
+    public AsymmetricJwtUtil(PublicKey publicKey){
+        this.publicKey = publicKey;
     }
 
     public void validateAccessToken(String token) throws AuthCommonInvalidAccessTokenException {
@@ -57,11 +43,10 @@ public class JwtUtil {
             Claims claims = getTokenClaims(token);
             return claims.get("token_type", String.class).equals("access");
         }
-        catch (AuthCommonInvalidTokenException e)
+        catch (AuthCommonInvalidTokenException | AuthCommonSignatureMismatchException e)
         {
             return false;
         }
-
     }
 
     public boolean isValidRefreshToken(String token) {
@@ -70,53 +55,49 @@ public class JwtUtil {
             Claims claims = getTokenClaims(token);
             return claims.get("token_type", String.class).equals("refresh");
         }
-        catch (AuthCommonInvalidTokenException e)
+        catch (AuthCommonInvalidTokenException | AuthCommonSignatureMismatchException e)
         {
             return false;
         }
-
     }
 
-    public Instant getIssuedAt(String token) {
+    public Instant getIssuedAt(String token) throws AuthCommonSignatureMismatchException, AuthCommonInvalidTokenException {
+        validateToken(token);
         Claims claims = getTokenClaims(token);
 
         return claims.getIssuedAt().toInstant();
     }
 
-    public Instant getExpiration(String refreshToken) {
-        Claims claims = getTokenClaims(refreshToken);
-
+    public Instant getExpiration(String token) throws AuthCommonInvalidTokenException, AuthCommonSignatureMismatchException {
+        validateToken(token);
+        Claims claims = getTokenClaims(token);
         return claims.getExpiration().toInstant();
     }
 
-    public UUID getUserIdFromAccessToken(String accessToken) throws AuthCommonInvalidAccessTokenException {
+    public UUID getUserIdFromAccessToken(String accessToken) throws AuthCommonInvalidAccessTokenException, AuthCommonSignatureMismatchException {
         validateAccessToken(accessToken);
         Claims claims = getTokenClaims(accessToken);
         String userIdStr = claims.getSubject();
         return UUID.fromString(userIdStr);
     }
 
-    private Claims getTokenClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    private String generateToken(UUID userId, String tokenType, long expirationMillis) {
-        return Jwts.builder()
-                .subject(userId.toString())
-                .claim("token_type", tokenType)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
-                .signWith(secretKey)
-                .compact();
+    private Claims getTokenClaims(String token) throws AuthCommonSignatureMismatchException {
+        try {
+            return Jwts.parser()
+                    .verifyWith(publicKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (SignatureException e) {
+            // This is the primary exception for signature mismatch
+            log.warn("JWT signature validation failed: {}", e.getMessage(), e);
+            throw new AuthCommonSignatureMismatchException(e.getMessage());
+        }
     }
 
     private void validateToken(String token) throws AuthCommonInvalidTokenException {
         try{
-            Jwts.parser().verifyWith((SecretKey) secretKey)
+            Jwts.parser().verifyWith(publicKey)
                     .build()
                     .parseSignedClaims(token);
         } catch(SignatureException e){

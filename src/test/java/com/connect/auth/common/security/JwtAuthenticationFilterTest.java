@@ -1,8 +1,8 @@
-// src/test/java/com/connect/auth/security/JwtAuthenticationFilterTest.java
 package com.connect.auth.common.security;
 
 import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
-import com.connect.auth.common.util.JwtUtil;
+import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
+import com.connect.auth.common.util.AsymmetricJwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -22,7 +22,10 @@ import static org.mockito.Mockito.*;
 class JwtAuthenticationFilterTest {
 
     @Mock
-    JwtUtil jwtUtil;
+    AsymmetricJwtUtil jwtUtil;
+
+    @Mock
+    SecurityProperties securityProperties;
 
     @Mock
     HttpServletRequest request;
@@ -38,12 +41,12 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        filter = new JwtAuthenticationFilter(jwtUtil);
+        filter = new JwtAuthenticationFilter(jwtUtil, List.of("/auth/public/**"));
         SecurityContextHolder.clearContext();
     }
 
     @Test
-    void doFilterInternal_ValidToken_SetsAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException {
+    void doFilterInternal_ValidToken_SetsAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException, AuthCommonSignatureMismatchException {
         String token = "validToken";
         UUID userId = UUID.randomUUID();
 
@@ -101,7 +104,6 @@ class JwtAuthenticationFilterTest {
     void doFilterInternal_PublicEndpoint_DoesNotSetAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException {
 
         when(request.getRequestURI()).thenReturn("/auth/public/someEndpoint");
-
         filter.doFilterInternal(request, response, filterChain);
 
         Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());

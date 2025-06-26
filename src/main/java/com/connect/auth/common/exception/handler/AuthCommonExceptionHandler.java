@@ -2,6 +2,7 @@ package com.connect.auth.common.exception.handler;
 
 import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
 import com.connect.auth.common.exception.AuthCommonInvalidTokenException;
+import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
 import com.connect.auth.common.exception.AuthCommonUnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
