@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,10 +65,12 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void doFilterInternal_EmptyAuthorizationHeader_DoesNotSetAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException {
+    void doFilterInternal_EmptyAuthorizationHeader_DoesNotSetAuthentication() throws ServletException, IOException {
+        PrintWriter printWriter = mock(PrintWriter.class);
         when(request.getHeader("Authorization")).thenReturn("");
         when(request.getRequestURI()).thenReturn("/auth/internal/someEndpoint");
-
+        when(response.getWriter()).thenReturn(printWriter);
+        doNothing().when(printWriter).write(anyString());
         filter.doFilterInternal(request, response, filterChain);
 
         Assertions.assertNull(SecurityContextHolder.getContext().getAuthentication());
@@ -76,6 +80,10 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_InvalidAccessTokenException_DoesNotSetAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException {
         String token = "invalidToken";
+        PrintWriter printWriter = mock(PrintWriter.class);
+
+        when(response.getWriter()).thenReturn(printWriter);
+        doNothing().when(printWriter).write(anyString());
 
         when(request.getRequestURI()).thenReturn("/auth/internal/someEndpoint");
 
@@ -93,6 +101,11 @@ class JwtAuthenticationFilterTest {
     void doFilterInternal_NoAuthorizationHeader_DoesNotSetAuthentication() throws ServletException, IOException, AuthCommonInvalidAccessTokenException {
         when(request.getHeader("Authorization")).thenReturn(null);
         when(request.getRequestURI()).thenReturn("/auth/internal/someEndpoint");
+
+        PrintWriter printWriter = mock(PrintWriter.class);
+
+        when(response.getWriter()).thenReturn(printWriter);
+        doNothing().when(printWriter).write(anyString());
 
         filter.doFilterInternal(request, response, filterChain);
 

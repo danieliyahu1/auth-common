@@ -66,11 +66,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
             catch (AuthCommonInvalidAccessTokenException | AuthCommonSignatureMismatchException e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                logger.warn("JWT validation failed: " +  e.getMessage()); // log for server
+                writeErrorResponse(response, "Your session has expired or the token is invalid. Please log in again.");
             }
         }
         else{
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.warn("Bearer token header is incorrect"); // log for server
+            writeErrorResponse(response, "Your bearer token header is incorrect, please verify it");
         }
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, String errorMessage) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String json = String.format(
+                "{\"error\": \"%s\", \"message\": \"%s\"}",
+                "UNAUTHORIZED",
+                errorMessage
+        );
+
+        response.getWriter().write(json);
+        response.getWriter().flush();
     }
 }
