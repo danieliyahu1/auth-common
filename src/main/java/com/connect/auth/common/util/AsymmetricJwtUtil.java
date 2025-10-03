@@ -1,9 +1,9 @@
-package com.connect.auth.common.util;
+package com.akatsuki.auth.common.util;
 
-import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
-import com.connect.auth.common.exception.AuthCommonInvalidRefreshTokenException;
-import com.connect.auth.common.exception.AuthCommonInvalidTokenException;
-import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidAccessTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidRefreshTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonSignatureMismatchException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

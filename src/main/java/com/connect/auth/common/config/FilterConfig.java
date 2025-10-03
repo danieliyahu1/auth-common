@@ -1,8 +1,8 @@
-package com.connect.auth.common.config;
+package com.akatsuki.auth.common.config;
 
-import com.connect.auth.common.security.JwtAuthenticationFilter;
-import com.connect.auth.common.security.SecurityProperties;
-import com.connect.auth.common.util.AsymmetricJwtUtil;
+import com.akatsuki.auth.common.security.JwtAuthenticationFilter;
+import com.akatsuki.auth.common.security.SecurityProperties;
+import com.akatsuki.auth.common.util.AsymmetricJwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

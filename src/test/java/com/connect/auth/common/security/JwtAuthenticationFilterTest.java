@@ -1,8 +1,8 @@
-package com.connect.auth.common.security;
+package com.akatsuki.auth.common.security;
 
-import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
-import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
-import com.connect.auth.common.util.AsymmetricJwtUtil;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidAccessTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonSignatureMismatchException;
+import com.akatsuki.auth.common.util.AsymmetricJwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

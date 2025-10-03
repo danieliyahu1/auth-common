@@ -1,7 +1,7 @@
-package com.connect.auth.common.config;
+package com.akatsuki.auth.common.config;
 
-import com.connect.auth.common.security.JwtAuthenticationFilter;
-import com.connect.auth.common.security.SecurityProperties;
+import com.akatsuki.auth.common.security.JwtAuthenticationFilter;
+import com.akatsuki.auth.common.security.SecurityProperties;
 import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

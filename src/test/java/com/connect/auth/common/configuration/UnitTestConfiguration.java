@@ -1,4 +1,4 @@
-package com.connect.auth.common.configuration;
+package com.akatsuki.auth.common.configuration;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

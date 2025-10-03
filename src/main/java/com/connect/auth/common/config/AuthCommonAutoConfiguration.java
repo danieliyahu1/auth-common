@@ -1,9 +1,9 @@
-package com.connect.auth.common.config;
+package com.akatsuki.auth.common.config;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 @AutoConfiguration
-@ComponentScan("com.connect.auth.common")
+@ComponentScan("com.akatsuki.auth.common")
 public class AuthCommonAutoConfiguration {
 }

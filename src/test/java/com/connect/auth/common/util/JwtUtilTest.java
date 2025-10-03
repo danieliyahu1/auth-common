@@ -1,11 +1,11 @@
-package com.connect.auth.common.util;
+package com.akatsuki.auth.common.util;
 
-import com.connect.auth.common.configuration.UnitTestConfiguration;
-import com.connect.auth.common.exception.AuthCommonInvalidAccessTokenException;
-import com.connect.auth.common.exception.AuthCommonInvalidRefreshTokenException;
-import com.connect.auth.common.exception.AuthCommonInvalidTokenException;
-import com.connect.auth.common.exception.AuthCommonSignatureMismatchException;
-import com.connect.auth.common.service.TestTokenGenerator;
+import com.akatsuki.auth.common.configuration.UnitTestConfiguration;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidAccessTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidRefreshTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonInvalidTokenException;
+import com.akatsuki.auth.common.exception.AuthCommonSignatureMismatchException;
+import com.akatsuki.auth.common.service.TestTokenGenerator;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;

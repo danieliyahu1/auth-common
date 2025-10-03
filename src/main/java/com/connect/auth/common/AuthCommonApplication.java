@@ -1,4 +1,4 @@
-package com.connect.auth.common;
+package com.akatsuki.auth.common;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

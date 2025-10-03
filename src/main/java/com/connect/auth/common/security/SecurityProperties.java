@@ -1,4 +1,4 @@
-package com.connect.auth.common.security;
+package com.akatsuki.auth.common.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

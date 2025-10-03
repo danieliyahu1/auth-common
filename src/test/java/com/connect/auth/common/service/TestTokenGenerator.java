@@ -1,4 +1,4 @@
-package com.connect.auth.common.service;
+package com.akatsuki.auth.common.service;
 
 import java.util.UUID;
 
